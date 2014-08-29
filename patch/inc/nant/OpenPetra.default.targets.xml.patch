@@ -38,12 +38,3 @@
            <variable name="MONO_OPTIONS" value="--debug"/>
          </environment>
        </exec>
-@@ -249,7 +262,7 @@
-   </if>
- </target> 
- 
--<target name="start" depends="initConfigFiles, startServer, startClient">
-+<target name="start" depends="initConfigFiles, startServer">
- </target>
- 
- <target name="startStandalone">
