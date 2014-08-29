@@ -1,0 +1,11 @@
+--- openpetra.js.before/webserver/Samples/DemosForOpenPetraInBrowser/JQueryDesktopDemo/js/login.js	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/webserver/Samples/DemosForOpenPetraInBrowser/JQueryDesktopDemo/js/login.js	2014-08-29 15:37:59.000000000 +0200
+@@ -14,7 +14,7 @@
+     $("#btnLogin").click(function() {
+       $.ajax({
+           type: "POST",
+-          url: "../server.asmx/Login",
++          url: "/server.asmx/Login",
+           data: JSON.stringify({'username': $("#username").val(), 'password': $("#password").val()}),
+           contentType: "application/json; charset=utf-8",
+           dataType: "json",

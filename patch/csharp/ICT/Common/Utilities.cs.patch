@@ -1,0 +1,11 @@
+--- openpetra.js.before/csharp/ICT/Common/Utilities.cs	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Common/Utilities.cs	2014-08-29 15:37:58.000000000 +0200
+@@ -166,7 +166,7 @@
+ StartSelection:<<<<<<<3
+ EndSelection:<<<<<<<4
+ SourceURL:OpenPetra
+-"                                                                                                                                                                                                            );
++"                                                                                                                                                                                                   );
+             int startHTML = sb.Length;
+             int fragmentEnd;
+             int fragmentStart = HtmlString.ToLower().IndexOf("<body>");

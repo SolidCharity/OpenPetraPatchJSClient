@@ -1,0 +1,49 @@
+--- openpetra.js.before/inc/nant/OpenPetra.default.targets.xml	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/inc/nant/OpenPetra.default.targets.xml	2014-08-29 15:37:59.000000000 +0200
+@@ -118,7 +118,7 @@
+               spawn="true">
+         <environment>
+           <variable name="PATH" path="${MonoBinPath};${environment::get-variable('PATH')}"/>
+-          <variable name="MONO_PATH" path="${MonoBinPath}\..\lib\mono\4.0"/>
++          <variable name="MONO_PATH" path="${MonoBinPath}\.."/>
+           <variable name="MONO_OPTIONS" value="--debug"/>
+           <!-- see http://www.mono-project.com/IOMap -->
+           <!-- <variable name="MONO_IOMAP" value="all"/> -->
+@@ -155,6 +155,19 @@
+     </if>
+   </if>
+   <if test="${'unix'==platform::get-name()}" >
++      <!-- create symbolic link for Samples -->
++      <if test="${not directory::exists(dir.delivery + '/Samples')}">
++        <exec program="bash"
++            workingdir="${dir.delivery}"
++            commandline="-c &quot;ln -s ../webserver/Samples&quot;"/>
++      </if>
++      <!-- create symbolic links for OpenPetra.js -->
++      <if test="${not directory::exists(dir.delivery + '/ThirdParty')}">
++        <exec program="bash"
++            workingdir="${dir.delivery}"
++            commandline="-c &quot;for f in ../js/*;do ln -s $f; done&quot;"/>
++      </if>
++      <delete file="${dir.bin}/sqlite3.dll"/>
+       <echo message="in your browser, go to http://localhost:${Server.Port}/"/>
+       <exec program="xsp4" 
+               workingdir="${dir.delivery}"
+@@ -162,7 +175,7 @@
+               spawn="false">
+         <environment>
+           <variable name="PATH" path="${environment::get-variable('PATH')};${MonoBinPath}"/>
+-          <variable name="MONO_PATH" path="${MonoBinPath}\..\lib\mono\4.0"/>
++          <variable name="MONO_PATH" path="${MonoBinPath}\.."/>
+           <variable name="MONO_OPTIONS" value="--debug"/>
+         </environment>
+       </exec>
+@@ -249,7 +262,7 @@
+   </if>
+ </target> 
+ 
+-<target name="start" depends="initConfigFiles, startServer, startClient">
++<target name="start" depends="initConfigFiles, startServer">
+ </target>
+ 
+ <target name="startStandalone">

@@ -1,0 +1,18 @@
+--- openpetra.js.before/inc/template/etc/Server-sqlite.config	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/inc/template/etc/Server-sqlite.config	2014-08-29 15:37:59.000000000 +0200
+@@ -11,6 +11,8 @@
+     <add key="Reporting.PathCustomReports" value="${dir.root}/XmlReports/custom" />
+     <add key="AnonymousUserPasswd" value="TOBESETBYINSTALLER2" />
+     <add key="Formletters.Path" value="${Formletters.Path}" />
++    <add key="UINavigation.File" value="../csharp/ICT/Petra/Definitions/UINavigation.yml"/>
++    <add key="Forms.Path" value="../js/forms"/>
+ 
+     <add key="WebRequestTimeOutInMinutes" value="15"/>
+ 
+@@ -54,4 +56,4 @@
+     <customErrors mode="Off"/>
+     <compilation tempDirectory="${tempdir}" debug="true" strict="false" explicit="true"/>
+   </system.web>
+-</configuration>
+\ No newline at end of file
++</configuration>

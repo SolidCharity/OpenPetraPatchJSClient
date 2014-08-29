@@ -1,0 +1,18 @@
+--- openpetra.js.before/inc/nant/OpenPetra.tobe.migrated.xml	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/inc/nant/OpenPetra.tobe.migrated.xml	2014-08-29 15:37:59.000000000 +0200
+@@ -149,7 +149,7 @@
+     <property name="pgdump.exe" value="pg_dump" overwrite="false"/>
+     <property name="MySQL.exe" value="mysql" overwrite="false"/>
+     <property name="makensis.exe" value="makensis" overwrite="false"/>
+-    <property name="MonoBinPath" value="/usr/bin" overwrite="false"/>
++    <property name="MonoBinPath" value="/opt/mono-openpetra/bin" overwrite="false"/>
+     <property name="Dia.exe" value="doesnotexist/dia.exe" overwrite="false"/>
+     <property name="sql2dia" value="${dir.3rdParty}/sql2dia/sql2dia32" overwrite="false"/>
+ 
+@@ -223,4 +223,4 @@
+   
+ <include buildfile="../../db/database.build" />
+ 
+-</project>
+\ No newline at end of file
++</project>

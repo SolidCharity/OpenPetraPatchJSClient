@@ -1,0 +1,11 @@
+--- openpetra.js.before/csharp/ICT/Petra/Client/MPartner/Gui/PartnerImport.ManualCode.cs	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Petra/Client/MPartner/Gui/PartnerImport.ManualCode.cs	2014-08-29 15:37:58.000000000 +0200
+@@ -505,7 +505,7 @@
+                         "",
+                         Ict.Petra.Shared.MPartner.Calculations.FormatShortName(FCurrentPartner.PartnerShortName, eShortNameFormat.eOnlySurname),
+                         BestLocation.City,
+-                        new StringCollection());
++                        string.Empty);
+ 
+                 if (result.SearchResult.DefaultView.Count > 0)
+                 {

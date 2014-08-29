@@ -1,0 +1,16 @@
+--- openpetra.js.before/csharp/ICT/Petra/Server/lib/MSysMan/UserDefaults.cs	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Petra/Server/lib/MSysMan/UserDefaults.cs	2014-08-29 15:37:59.000000000 +0200
+@@ -44,6 +44,13 @@
+     /// </summary>
+     public class TUserDefaults
+     {
++        /*------------------------------------------------------------------------------
++         *  Finance User Default Constants
++         * -------------------------------------------------------------------------------*/
++
++        /// <summary>todoComment</summary>
++        public const String FINANCE_DEFAULT_LEDGERNUMBER = "a_default_ledger_number_i";
++
+         private const String USERDEFAULTSDT_NAME = "UserDefaultsCacheDT";
+ 
+         /// <summary>internal cache DataSet of the UserDefaults  for current user only</summary>

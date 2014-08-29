@@ -1,0 +1,19 @@
+--- openpetra.js.before/csharp/ICT/Petra/Server/lib/MPartner/Partner.Cacheable.ManualCode.cs	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Petra/Server/lib/MPartner/Partner.Cacheable.ManualCode.cs	2014-08-29 15:37:59.000000000 +0200
+@@ -5,6 +5,7 @@
+ //       timop
+ //
+ // Copyright 2004-2012 by OM International
++// Copyright 2013-2014 by SolidCharity
+ //
+ // This file is part of OpenPetra.org.
+ //
+@@ -155,7 +156,7 @@
+         private DataTable GetCountryListFromExistingLocationsTable(TDBTransaction AReadTransaction, string ATableName)
+         {
+             // Used eg. in Report Gift Data Export for finding donors.
+-            return DBAccess.GDBAccessObj.SelectDT("SELECT DISTINCT " + "PUB." + PCountryTable.GetTableDBName() + '.' +
++            return DBAccess.GDBAccessObj.SelectDT("SELECT DISTINCT c." +
+                 PCountryTable.GetCountryCodeDBName() + ", " +
+                 PCountryTable.GetCountryNameDBName() + " FROM PUB." +
+                 PCountryTable.GetTableDBName() + " c, PUB." +

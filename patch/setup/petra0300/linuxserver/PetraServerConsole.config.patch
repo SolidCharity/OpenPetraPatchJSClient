@@ -1,0 +1,20 @@
+--- openpetra.js.before/setup/petra0300/linuxserver/PetraServerConsole.config	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/setup/petra0300/linuxserver/PetraServerConsole.config	2014-08-29 15:37:59.000000000 +0200
+@@ -10,7 +10,9 @@
+     <add key="Reporting.PathStandardReports" value="/usr/local/openpetraorg/reports30" />
+     <add key="Reporting.PathCustomReports" value="/usr/local/openpetraorg/custom30" />
+     <add key="AnonymousUserPasswd" value="TOBESETBYINSTALLER2" />
+-    <add key="Formletters.Path" value="/usr/local/openpetraorg//formletters30"/>
++    <add key="Formletters.Path" value="/usr/local/openpetraorg/formletters30"/>
++    <add key="UINavigation.File" value="/usr/local/openpetraorg/bin30/UINavigation.yml"/>
++    <add key="Forms.Path" value="/usr/local/openpetraorg/js30/forms"/>
+ 
+     <add key="WebRequestTimeOutInMinutes" value="15"/>
+ 
+@@ -54,4 +56,4 @@
+     <customErrors mode="Off"/>
+     <compilation tempDirectory="/home/USERNAME/tmp" debug="true" strict="false" explicit="true"/>
+   </system.web>
+-</configuration>
+\ No newline at end of file
++</configuration>

@@ -1,0 +1,31 @@
+--- openpetra.js.before/csharp/ICT/Petra/Server/lib/MPartner/web/SimplePartnerFind.cs	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Petra/Server/lib/MPartner/web/SimplePartnerFind.cs	2014-08-29 15:37:59.000000000 +0200
+@@ -5,6 +5,7 @@
+ //       timop
+ //
+ // Copyright 2004-2011 by OM International
++// Copyright 2013-2014 by SolidCharity
+ //
+ // This file is part of OpenPetra.org.
+ //
+@@ -51,7 +52,7 @@
+         /// Return all partners that match the given criteria. This is used for the partner import screen.
+         /// </summary>
+         [RequireModulePermission("PTNRUSER")]
+-        public static PartnerFindTDS FindPartners(string AFirstName, string AFamilyNameOrOrganisation, string ACity, StringCollection APartnerClasses)
++        public static PartnerFindTDS FindPartners(string AFirstName, string AFamilyNameOrOrganisation, string ACity, string APartnerClass)
+         {
+             TPartnerFind PartnerFind = new TPartnerFind();
+ 
+@@ -65,9 +66,9 @@
+             CriteriaRow.City = ACity;
+ 
+             // TODO: only works for one partner class at the moment
+-            if (APartnerClasses.Count == 1)
++            if (APartnerClass.Length > 0)
+             {
+-                CriteriaRow.PartnerClass = APartnerClasses[0];
++                CriteriaRow.PartnerClass = APartnerClass;
+             }
+             else
+             {
