@@ -8,7 +8,148 @@
  //
  // This file is part of OpenPetra.org.
  //
-@@ -32,16 +33,73 @@
+@@ -158,6 +159,7 @@ public class GenerateServerGlue
+ 
+         snippet.SetCodelet("LOCALVARIABLES", string.Empty);
+         string returnCode = string.Empty;
++        int returnCounter = 0;
+ 
+         foreach (ParameterDeclarationExpression p in AParameters)
+         {
+@@ -199,10 +201,12 @@ public class GenerateServerGlue
+                 }
+             }
+ 
++            bool EnumParameter = parametertype.EndsWith("Enum");
+             bool BinaryParameter =
+                 !((parametertype.StartsWith("System.Int64")) || (parametertype.StartsWith("System.Int32"))
+                   || (parametertype.StartsWith("System.Int16"))
+-                  || (parametertype.StartsWith("System.String")) || (parametertype.StartsWith("System.Boolean")));
++                  || (parametertype.StartsWith("System.String")) || (parametertype.StartsWith("System.Boolean"))
++                  || EnumParameter);
+ 
+             if (ActualParameters.Length > 0)
+             {
+@@ -217,8 +221,7 @@ public class GenerateServerGlue
+                     ParameterDefinition += ", ";
+                 }
+ 
+-                if ((!BinaryParameter)
+-                    && (!ArrayParameter))
++                if ((!BinaryParameter) && (!ArrayParameter) && (!EnumParameter))
+                 {
+                     ParameterDefinition += parametertype + " " + p.ParameterName;
+                 }
+@@ -238,6 +241,16 @@ public class GenerateServerGlue
+                     Environment.NewLine);
+             }
+ 
++            // for string parameters, check if they have been encoded binary due to special characters in the string;
++            // this obviously does not apply to out parameters
++            if ((parametertype == "System.String") && ((ParameterModifiers.Out & p.ParamModifier) == 0))
++            {
++                snippet.AddToCodelet(
++                    "LOCALVARIABLES",
++                    p.ParameterName + " = (string) THttpBinarySerializer.DeserializeObject(" + p.ParameterName + ",\"System.String\");" +
++                    Environment.NewLine);
++            }
++
+             if ((ParameterModifiers.Out & p.ParamModifier) != 0)
+             {
+                 snippet.AddToCodelet("LOCALVARIABLES", parametertype + " " + p.ParameterName + ";" + Environment.NewLine);
+@@ -252,6 +265,13 @@ public class GenerateServerGlue
+                         Environment.NewLine);
+                     ActualParameters += "ref Local" + p.ParameterName;
+                 }
++                else if (EnumParameter)
++                {
++                    snippet.AddToCodelet("LOCALVARIABLES", parametertype + " Local" + p.ParameterName + " = " +
++                        " (" + parametertype + ") Enum.Parse(typeof(" + parametertype + "), " + p.ParameterName + ");" +
++                        Environment.NewLine);
++                    ActualParameters += "ref Local" + p.ParameterName;
++                }
+                 else
+                 {
+                     ActualParameters += "ref " + p.ParameterName;
+@@ -264,6 +284,10 @@ public class GenerateServerGlue
+                 {
+                     ActualParameters += "(" + parametertype + ")THttpBinarySerializer.DeserializeObject(" + p.ParameterName + ",\"binary\")";
+                 }
++                else if (EnumParameter)
++                {
++                    ActualParameters += " (" + parametertype + ") Enum.Parse(typeof(" + parametertype + "), " + p.ParameterName + ")";
++                }
+                 else
+                 {
+                     ActualParameters += p.ParameterName;
+@@ -272,11 +296,21 @@ public class GenerateServerGlue
+ 
+             if (((ParameterModifiers.Ref & p.ParamModifier) > 0) || ((ParameterModifiers.Out & p.ParamModifier) > 0))
+             {
++                if (returnCounter == 1)
++                {
++                    returnCode = "\"{ \\\"0\\\": \" + " + returnCode;
++                }
++
++                if (returnCounter > 0)
++                {
++                    returnCode += " + \", \\\"" + returnCounter.ToString() + "\\\": \" + ";
++                }
++
+                 returnCode +=
+-                    (returnCode.Length > 0 ? "+\",\"+" : string.Empty) +
+                     "THttpBinarySerializer.SerializeObjectWithType(" +
+                     (((ParameterModifiers.Ref & p.ParamModifier) > 0 && BinaryParameter) ? "Local" : string.Empty) +
+                     p.ParameterName + ")";
++                returnCounter++;
+             }
+         }
+ 
+@@ -303,11 +337,17 @@ public class GenerateServerGlue
+                 returntype = returntype.Contains("Decimal") || returntype == "decimal" ? "System.Decimal" : returntype;
+             }
+ 
+-            if (returnCode.Length > 0)
++            if (returnCounter > 0)
+             {
+                 if (returntype != "void")
+                 {
+-                    returnCode += (returnCode.Length > 0 ? "+\",\"+" : string.Empty) + "THttpBinarySerializer.SerializeObjectWithType(Result)";
++                    if (returnCounter == 1)
++                    {
++                        returnCode = "\"{ \\\"0\\\": \" + " + returnCode;
++                    }
++
++                    returnCode += "+\", \\\"" + returnCounter.ToString() + "\\\": \"+" + "THttpBinarySerializer.SerializeObjectWithType(Result)";
++                    returnCounter++;
+                 }
+ 
+                 returntype = "string";
+@@ -336,6 +376,11 @@ public class GenerateServerGlue
+                 localreturn = "return ";
+             }
+ 
++            if (returnCounter > 1)
++            {
++                returnCode += "+ \"}\"";
++            }
++
+             snippet.SetCodelet("RETURN", string.Empty);
+ 
+             if (returnCode.Length > 0)
+diff --git a/csharp/ICT/Common/Remoting/Shared/Serialization.cs b/csharp/ICT/Common/Remoting/Shared/Serialization.cs
+index 6344924..66f6b7d 100644
+--- a/csharp/ICT/Common/Remoting/Shared/Serialization.cs
++++ b/csharp/ICT/Common/Remoting/Shared/Serialization.cs
+@@ -5,6 +5,7 @@
+ //       timop
+ //
+ // Copyright 2004-2014 by OM International
++// Copyright 2013-2014 by SolidCharity
+ //
+ // This file is part of OpenPetra.org.
+ //
+@@ -32,16 +33,73 @@ using System.Collections.Specialized;
  using System.Runtime.Serialization;
  using System.Runtime.Serialization.Formatters.Binary;
  using System.Reflection;
@@ -84,7 +225,7 @@
          /// </summary>
          static public string SerializeObject(object o, bool binary)
          {
-@@ -60,6 +118,21 @@
+@@ -60,6 +118,21 @@ namespace Ict.Common.Remoting.Shared
                  return "null";
              }
  
@@ -106,21 +247,26 @@
              MemoryStream memoryStream = new MemoryStream();
              BinaryFormatter binaryFormatter = new BinaryFormatter();
              try
-@@ -120,7 +193,12 @@
+@@ -136,14 +209,12 @@ namespace Ict.Common.Remoting.Shared
  
              string result = SerializeObject(o, binary);
  
--            return result + ":" + (binary ? "binary" : o.GetType().ToString());
+-            if (result.EndsWith(":binary"))
 +            if ((result.Length > 0) && (result[0] != '{') && (result[0] != '['))
-+            {
+             {
+-                return result;
+-            }
+-            else
+-            {
+-                return result + ":" + (binary ? "binary" : o.GetType().ToString());
 +                result = "\"" + result + "\"";
-+            }
+             }
 +
-+            return result; // + ":" + (binary ? "binary" : o.GetType().ToString());
++            return result;
          }
  
          /// <summary>
-@@ -133,6 +211,16 @@
+@@ -156,6 +227,16 @@ namespace Ict.Common.Remoting.Shared
                  return null;
              }
  
@@ -137,7 +283,7 @@
              if (s.EndsWith(":binary"))
              {
                  type = "binary";
-@@ -183,13 +271,17 @@
+@@ -222,13 +303,17 @@ namespace Ict.Common.Remoting.Shared
  
                  throw new Exception("THttpBinarySerializer.DeserializeObject: unknown enum " + type);
              }
@@ -156,4 +302,3 @@
          }
      }
  }
-\ No newline at end of file
