@@ -8,7 +8,7 @@
  //
  // This file is part of OpenPetra.org.
  //
-@@ -32,19 +34,131 @@
+@@ -32,19 +33,132 @@
  using System.Runtime.Serialization;
  using System.Runtime.Serialization.Formatters.Binary;
  using System.Reflection;
