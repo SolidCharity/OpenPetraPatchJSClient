@@ -8,10 +8,11 @@
  //
  // This file is part of OpenPetra.org.
  //
-@@ -32,19 +33,131 @@
+@@ -32,19 +34,131 @@
  using System.Runtime.Serialization;
  using System.Runtime.Serialization.Formatters.Binary;
  using System.Reflection;
++using System.Web;
 +using System.Web.Script.Serialization;
  using Ict.Common;
  using Ict.Common.IO;
@@ -89,7 +90,7 @@
          /// </summary>
          static public string SerializeObject(object o, bool binary)
          {
-+            return THttpBinarySerializer::isJSClient()? SerializeObjectJSON(o, binary): SerializeObjectBase64(o, binary);
++            return THttpBinarySerializer.isJSClient()? SerializeObjectJSON(o, binary): SerializeObjectBase64(o, binary);
 +        }
 +
 +        /// <summary>
@@ -168,7 +169,7 @@
  
              string result = SerializeObject(o, binary);
  
-+            if (THttpBinarySerializer::isJSClient())
++            if (THttpBinarySerializer.isJSClient())
 +            {
 +                if ((result.Length > 0) && (result[0] != '{') && (result[0] != '['))
 +                {
