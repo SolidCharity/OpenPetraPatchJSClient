@@ -1,5 +1,5 @@
---- openpetra.js.before/csharp/ICT/BuildTools/GenerateGlue/CreateServerGlue.cs	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ICT/BuildTools/GenerateGlue/CreateServerGlue.cs	2014-08-29 15:37:58.000000000 +0200
+--- openpetra.js.before/csharp/ICT/BuildTools/GenerateGlue/CreateServerGlue.cs	2014-08-30 15:06:36.000000000 +0200
++++ openpetra.js/csharp/ICT/BuildTools/GenerateGlue/CreateServerGlue.cs	2014-08-30 15:01:03.000000000 +0200
 @@ -5,6 +5,7 @@
  //       timop
  //
@@ -8,15 +8,18 @@
  //
  // This file is part of OpenPetra.org.
  //
-@@ -158,6 +159,7 @@ public class GenerateServerGlue
+@@ -157,7 +158,9 @@
+         string ActualParameters = string.Empty;
  
          snippet.SetCodelet("LOCALVARIABLES", string.Empty);
-         string returnCode = string.Empty;
+-        string returnCode = string.Empty;
++        string returnCodeFatClient = string.Empty;
++        string returnCodeJSClient = string.Empty;
 +        int returnCounter = 0;
  
          foreach (ParameterDeclarationExpression p in AParameters)
          {
-@@ -199,10 +201,12 @@ public class GenerateServerGlue
+@@ -199,10 +202,12 @@
                  }
              }
  
@@ -30,7 +33,7 @@
  
              if (ActualParameters.Length > 0)
              {
-@@ -217,8 +221,7 @@ public class GenerateServerGlue
+@@ -217,8 +222,7 @@
                      ParameterDefinition += ", ";
                  }
  
@@ -40,7 +43,7 @@
                  {
                      ParameterDefinition += parametertype + " " + p.ParameterName;
                  }
-@@ -238,6 +241,16 @@ public class GenerateServerGlue
+@@ -238,6 +242,16 @@
                      Environment.NewLine);
              }
  
@@ -57,7 +60,7 @@
              if ((ParameterModifiers.Out & p.ParamModifier) != 0)
              {
                  snippet.AddToCodelet("LOCALVARIABLES", parametertype + " " + p.ParameterName + ";" + Environment.NewLine);
-@@ -252,6 +265,13 @@ public class GenerateServerGlue
+@@ -252,6 +266,13 @@
                          Environment.NewLine);
                      ActualParameters += "ref Local" + p.ParameterName;
                  }
@@ -71,7 +74,7 @@
                  else
                  {
                      ActualParameters += "ref " + p.ParameterName;
-@@ -264,6 +284,10 @@ public class GenerateServerGlue
+@@ -264,6 +285,10 @@
                  {
                      ActualParameters += "(" + parametertype + ")THttpBinarySerializer.DeserializeObject(" + p.ParameterName + ",\"binary\")";
                  }
@@ -82,30 +85,38 @@
                  else
                  {
                      ActualParameters += p.ParameterName;
-@@ -272,11 +296,21 @@ public class GenerateServerGlue
+@@ -272,11 +297,28 @@
  
              if (((ParameterModifiers.Ref & p.ParamModifier) > 0) || ((ParameterModifiers.Out & p.ParamModifier) > 0))
              {
+-                returnCode +=
+-                    (returnCode.Length > 0 ? "+\",\"+" : string.Empty) +
++                returnCodeFatClient +=
++                     (returnCodeFatClient.Length > 0 ? "+\",\"+" : string.Empty) +
++                     "THttpBinarySerializer.SerializeObjectWithType(" +
++                     (((ParameterModifiers.Ref & p.ParamModifier) > 0 && BinaryParameter) ? "Local" : string.Empty) +
++                     p.ParameterName + ")";
++
 +                if (returnCounter == 1)
 +                {
-+                    returnCode = "\"{ \\\"0\\\": \" + " + returnCode;
++                    returnCodeJSClient = "\"{ \\\"0\\\": \" + " + returnCodeJSClient;
 +                }
 +
 +                if (returnCounter > 0)
 +                {
-+                    returnCode += " + \", \\\"" + returnCounter.ToString() + "\\\": \" + ";
++                    returnCodeJSClient += " + \", \\\"" + returnCounter.ToString() + "\\\": \" + ";
 +                }
 +
-                 returnCode +=
--                    (returnCode.Length > 0 ? "+\",\"+" : string.Empty) +
++                returnCodeJSClient +=
                      "THttpBinarySerializer.SerializeObjectWithType(" +
                      (((ParameterModifiers.Ref & p.ParamModifier) > 0 && BinaryParameter) ? "Local" : string.Empty) +
                      p.ParameterName + ")";
++
 +                returnCounter++;
              }
          }
  
-@@ -303,11 +337,17 @@ public class GenerateServerGlue
+@@ -303,11 +345,20 @@
                  returntype = returntype.Contains("Decimal") || returntype == "decimal" ? "System.Decimal" : returntype;
              }
  
@@ -115,90 +126,20 @@
                  if (returntype != "void")
                  {
 -                    returnCode += (returnCode.Length > 0 ? "+\",\"+" : string.Empty) + "THttpBinarySerializer.SerializeObjectWithType(Result)";
++                    returnCodeFatClient += (returnCodeFatClient.Length > 0 ? "+\",\"+" : string.Empty) + "THttpBinarySerializer.SerializeObjectWithType(Result)";
++
 +                    if (returnCounter == 1)
 +                    {
-+                        returnCode = "\"{ \\\"0\\\": \" + " + returnCode;
++                        returnCodeJSClient = "\"{ \\\"0\\\": \" + " + returnCodeJSClient;
 +                    }
 +
-+                    returnCode += "+\", \\\"" + returnCounter.ToString() + "\\\": \"+" + "THttpBinarySerializer.SerializeObjectWithType(Result)";
++                    returnCodeJSClient += "+\", \\\"" + returnCounter.ToString() + "\\\": \"+" + "THttpBinarySerializer.SerializeObjectWithType(Result)";
++
 +                    returnCounter++;
                  }
  
                  returntype = "string";
-@@ -336,6 +376,11 @@ public class GenerateServerGlue
-                 localreturn = "return ";
-             }
- 
-+            if (returnCounter > 1)
-+            {
-+                returnCode += "+ \"}\"";
-+            }
-+
-             snippet.SetCodelet("RETURN", string.Empty);
- 
-             if (returnCode.Length > 0)
---- openpetra.js.before/csharp/ICT/BuildTools/GenerateGlue/CreateServerGlue.cs	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ICT/BuildTools/GenerateGlue/CreateServerGlue.cs	2014-08-29 15:37:58.000000000 +0200
-@@ -158,7 +158,8 @@ public class GenerateServerGlue
-         string ActualParameters = string.Empty;
- 
-         snippet.SetCodelet("LOCALVARIABLES", string.Empty);
--        string returnCode = string.Empty;
-+        string returnCodeFatClient = string.Empty;
-+        string returnCodeJSClient = string.Empty;
-         int returnCounter = 0;
- 
-         foreach (ParameterDeclarationExpression p in AParameters)
-@@ -296,20 +297,27 @@ public class GenerateServerGlue
- 
-             if (((ParameterModifiers.Ref & p.ParamModifier) > 0) || ((ParameterModifiers.Out & p.ParamModifier) > 0))
-             {
-+                returnCodeFatClient +=
-+                     (returnCodeFatClient.Length > 0 ? "+\",\"+" : string.Empty) +
-+                     "THttpBinarySerializer.SerializeObjectWithType(" +
-+                     (((ParameterModifiers.Ref & p.ParamModifier) > 0 && BinaryParameter) ? "Local" : string.Empty) +
-+                     p.ParameterName + ")";
-+
-                 if (returnCounter == 1)
-                 {
--                    returnCode = "\"{ \\\"0\\\": \" + " + returnCode;
-+                    returnCodeJSClient = "\"{ \\\"0\\\": \" + " + returnCodeJSClient;
-                 }
- 
-                 if (returnCounter > 0)
-                 {
--                    returnCode += " + \", \\\"" + returnCounter.ToString() + "\\\": \" + ";
-+                    returnCodeJSClient += " + \", \\\"" + returnCounter.ToString() + "\\\": \" + ";
-                 }
- 
--                returnCode +=
-+                returnCodeJSClient +=
-                     "THttpBinarySerializer.SerializeObjectWithType(" +
-                     (((ParameterModifiers.Ref & p.ParamModifier) > 0 && BinaryParameter) ? "Local" : string.Empty) +
-                     p.ParameterName + ")";
-+
-                 returnCounter++;
-             }
-         }
-@@ -341,12 +349,15 @@ public class GenerateServerGlue
-             {
-                 if (returntype != "void")
-                 {
-+                    returnCodeFatClient += (returnCodeFatClient.Length > 0 ? "+\",\"+" : string.Empty) + "THttpBinarySerializer.SerializeObjectWithType(Result)";
-+
-                     if (returnCounter == 1)
-                     {
--                        returnCode = "\"{ \\\"0\\\": \" + " + returnCode;
-+                        returnCodeJSClient = "\"{ \\\"0\\\": \" + " + returnCodeJSClient;
-                     }
- 
--                    returnCode += "+\", \\\"" + returnCounter.ToString() + "\\\": \"+" + "THttpBinarySerializer.SerializeObjectWithType(Result)";
-+                    returnCodeJSClient += "+\", \\\"" + returnCounter.ToString() + "\\\": \"+" + "THttpBinarySerializer.SerializeObjectWithType(Result)";
-+
-                     returnCounter++;
-                 }
- 
-@@ -358,7 +369,7 @@ public class GenerateServerGlue
+@@ -318,7 +369,7 @@
                         || (returntype == "System.String") || (returntype == "System.Boolean")) && (returntype != "void"))
              {
                  returntype = "string";
@@ -207,7 +148,7 @@
              }
  
              string localreturn = AutoGenerationTools.TypeToString(AReturnType, "");
-@@ -367,7 +378,7 @@ public class GenerateServerGlue
+@@ -327,7 +378,7 @@
              {
                  localreturn = string.Empty;
              }
@@ -216,14 +157,15 @@
              {
                  localreturn += " Result = ";
              }
-@@ -378,14 +389,14 @@ public class GenerateServerGlue
- 
-             if (returnCounter > 1)
-             {
--                returnCode += "+ \"}\"";
-+                returnCodeJSClient += "+ \"}\"";
+@@ -336,11 +387,16 @@
+                 localreturn = "return ";
              }
  
++            if (returnCounter > 1)
++            {
++                returnCodeJSClient += "+ \"}\"";
++            }
++
              snippet.SetCodelet("RETURN", string.Empty);
  
 -            if (returnCode.Length > 0)

@@ -1,5 +1,5 @@
---- openpetra.js.before/setup/petra0300/linuxserver/postgresql/debian/openpetraorg-server.sh	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/setup/petra0300/linuxserver/postgresql/debian/openpetraorg-server.sh	2014-08-29 15:37:59.000000000 +0200
+--- openpetra.js.before/setup/petra0300/linuxserver/postgresql/debian/openpetraorg-server.sh	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/setup/petra0300/linuxserver/postgresql/debian/openpetraorg-server.sh	2014-08-30 15:01:03.000000000 +0200
 @@ -3,7 +3,7 @@
  # description: Starts and stops the openpetraorg server running with Mono
  #
@@ -69,7 +69,9 @@
  stop() {
 -    log_daemon_msg "Stopping OpenPetra.org server for $CustomerName"
 +    log_daemon_msg "Stopping OpenPetra.org server"
-+    cd $OpenPetraOrgPath/bin30
+     cd $OpenPetraOrgPath/bin30
+-    parameters="-Server.Port:$OPENPETRA_PORT -Server.ChannelEncryption.PublicKeyfile:$OPENPETRA_LocationPublicKeyFile"
+-    su $userName -c "$mono --runtime=v4.0 --server PetraServerAdminConsole.exe -C:$OpenPetraOrgPath/etc30/PetraServerAdminConsole.config $parameters -Command:Stop"
 +    
 +    su $userName -c ". $mono_path/env.sh; $mono --runtime=v4.0 --server PetraServerAdminConsole.exe -C:/home/$userName/etc/PetraServerAdminConsole.config -Command:Stop"
 +    
@@ -79,9 +81,7 @@
 +
 +# load a new database from a yml.gz file. this will overwrite the current database!
 +loadYmlGz() {
-     cd $OpenPetraOrgPath/bin30
--    parameters="-Server.Port:$OPENPETRA_PORT -Server.ChannelEncryption.PublicKeyfile:$OPENPETRA_LocationPublicKeyFile"
--    su $userName -c "$mono --runtime=v4.0 --server PetraServerAdminConsole.exe -C:$OpenPetraOrgPath/etc30/PetraServerAdminConsole.config $parameters -Command:Stop"
++    cd $OpenPetraOrgPath/bin30
 +    su $userName -c ". $mono_path/env.sh; $mono --runtime=v4.0 --server PetraServerAdminConsole.exe -C:/home/$userName/etc/PetraServerAdminConsole.config -Command:LoadYmlGz -YmlGzFile:$ymlgzfile"
      status=0
      log_end_msg $status

@@ -1,5 +1,5 @@
---- openpetra.js.before/setup/petra0300/linuxserver/postgresql/centos/openpetraorg-server.sh	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/setup/petra0300/linuxserver/postgresql/centos/openpetraorg-server.sh	2014-08-29 15:37:59.000000000 +0200
+--- openpetra.js.before/setup/petra0300/linuxserver/postgresql/centos/openpetraorg-server.sh	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/setup/petra0300/linuxserver/postgresql/centos/openpetraorg-server.sh	2014-08-30 15:01:03.000000000 +0200
 @@ -8,9 +8,11 @@
  NAME=`basename $0`
  if [ ${NAME:0:1} = "S" -o ${NAME:0:1} = "K" ]
@@ -13,7 +13,7 @@
  if [ -z "$OpenPetraOrgPath" ]
  then
    export OpenPetraOrgPath=/usr/local/openpetraorg
-@@ -141,16 +143,21 @@ init() {
+@@ -141,16 +143,21 @@
      echo "creating database..."
      service postgresql-$POSTGRESQLVERSION initdb
      service postgresql-$POSTGRESQLVERSION start
@@ -44,7 +44,7 @@
  
      useradd --home /home/$userName $userName
      mkdir -p /home/$userName/log
-@@ -171,7 +178,9 @@ init() {
+@@ -171,7 +178,9 @@
         | sed -e "s/OPENPETRA_PORT/$OPENPETRA_PORT/" \
         > /home/$userName/etc/PetraServerAdminConsole.config
  
@@ -55,7 +55,7 @@
      chown -R $userName:$userName /home/$userName
      chmod 600 /home/$userName/.pgpass
      chown $userName /home/$userName/.pgpass
-@@ -199,16 +208,21 @@ init() {
+@@ -199,16 +208,21 @@
    )
  }
  FINISH

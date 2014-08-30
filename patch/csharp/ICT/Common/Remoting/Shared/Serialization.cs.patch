@@ -1,5 +1,5 @@
---- openpetra.js.before/csharp/ICT/Common/Remoting/Shared/Serialization.cs	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ICT/Common/Remoting/Shared/Serialization.cs	2014-08-29 15:37:58.000000000 +0200
+--- openpetra.js.before/csharp/ICT/Common/Remoting/Shared/Serialization.cs	2014-08-30 15:06:36.000000000 +0200
++++ openpetra.js/csharp/ICT/Common/Remoting/Shared/Serialization.cs	2014-08-30 15:01:03.000000000 +0200
 @@ -5,6 +5,7 @@
  //       timop
  //
@@ -8,7 +8,7 @@
  //
  // This file is part of OpenPetra.org.
  //
-@@ -32,16 +33,73 @@ using System.Collections.Specialized;
+@@ -32,19 +33,131 @@
  using System.Runtime.Serialization;
  using System.Runtime.Serialization.Formatters.Binary;
  using System.Reflection;
@@ -23,6 +23,11 @@
 +    /// TODO: rename the class
      public class THttpBinarySerializer
      {
++        static private bool isJSClient()
++        {
++            return HttpContext.Current!=null && !HttpContext.Current.Request.UserAgent.Contains("OpenPetra");
++        }
++
 +        static private string DataSetToJson(DataSet ADataset)
 +        {
 +            JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -80,106 +85,6 @@
 +
          /// <summary>
 -        /// serialize any object. if it is a complex type, use Base64
-+        /// serialize any object. if it is a complex type, use JSON
-         /// </summary>
-         static public string SerializeObject(object o, bool binary)
-         {
-@@ -60,6 +118,21 @@ namespace Ict.Common.Remoting.Shared
-                 return "null";
-             }
- 
-+            if (o is Type)
-+            {
-+                return o.ToString();
-+            }
-+
-+            if (o is DataSet)
-+            {
-+                return DataSetToJson((DataSet)o);
-+            }
-+
-+            if (o is DataTable)
-+            {
-+                return DataTableToJson((DataTable)o);
-+            }
-+
-             MemoryStream memoryStream = new MemoryStream();
-             BinaryFormatter binaryFormatter = new BinaryFormatter();
-             try
-@@ -136,14 +209,12 @@ namespace Ict.Common.Remoting.Shared
- 
-             string result = SerializeObject(o, binary);
- 
--            if (result.EndsWith(":binary"))
-+            if ((result.Length > 0) && (result[0] != '{') && (result[0] != '['))
-             {
--                return result;
--            }
--            else
--            {
--                return result + ":" + (binary ? "binary" : o.GetType().ToString());
-+                result = "\"" + result + "\"";
-             }
-+
-+            return result;
-         }
- 
-         /// <summary>
-@@ -156,6 +227,16 @@ namespace Ict.Common.Remoting.Shared
-                 return null;
-             }
- 
-+            if (s == null)
-+            {
-+                return null;
-+            }
-+
-+            if ((type == "System.String") && s.EndsWith(":base64"))
-+            {
-+                return System.Text.UTF8Encoding.ASCII.GetString(Convert.FromBase64String(s.Substring(0, s.Length - ":base65".Length)));
-+            }
-+
-             if (s.EndsWith(":binary"))
-             {
-                 type = "binary";
-@@ -222,13 +303,17 @@ namespace Ict.Common.Remoting.Shared
- 
-                 throw new Exception("THttpBinarySerializer.DeserializeObject: unknown enum " + type);
-             }
--            else // if (type == "binary" || true)
-+            else if ((s != null) && (s.Length > 9)) // if (type == "binary" || true)
-             {
-                 MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(s));
-                 memoryStream.Seek(0, SeekOrigin.Begin);
-                 BinaryFormatter binaryFormatter = new BinaryFormatter();
-                 return binaryFormatter.Deserialize(memoryStream);
-             }
-+            else
-+            {
-+                return null;
-+            }
-         }
-     }
- }
---- openpetra.js.before/csharp/ICT/Common/Remoting/Shared/Serialization.cs     2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ICT/Common/Remoting/Shared/Serialization.cs    2014-08-29 15:37:58.000000000 +0200
-@@ -43,6 +43,11 @@
-     /// TODO: rename the class
-     public class THttpBinarySerializer
-     {
-+        static private bool isJSClient()
-+        {
-+            return HttpContext.Current!=null && !HttpContext.Current.Request.UserAgent.Contains("OpenPetra");
-+        }
-+
-         static private string DataSetToJson(DataSet ADataset)
-         {
-             JavaScriptSerializer serializer = new JavaScriptSerializer();
-@@ -99,10 +104,60 @@
-         }
- 
-         /// <summary>
--        /// serialize any object. if it is a complex type, use JSON
 +        /// serialize any object. if it is a complex type, use JSON or Base64 (fat client)
          /// </summary>
          static public string SerializeObject(object o, bool binary)
@@ -237,33 +142,79 @@
              if (!binary)
              {
                  if (o.GetType() == typeof(bool))
-@@ -209,12 +264,25 @@
+@@ -60,6 +173,21 @@
+                 return "null";
+             }
+ 
++            if (o is Type)
++            {
++                return o.ToString();
++            }
++
++            if (o is DataSet)
++            {
++                return DataSetToJson((DataSet)o);
++            }
++
++            if (o is DataTable)
++            {
++                return DataTableToJson((DataTable)o);
++            }
++
+             MemoryStream memoryStream = new MemoryStream();
+             BinaryFormatter binaryFormatter = new BinaryFormatter();
+             try
+@@ -136,6 +264,17 @@
  
              string result = SerializeObject(o, binary);
  
--            if ((result.Length > 0) && (result[0] != '{') && (result[0] != '['))
 +            if (THttpBinarySerializer::isJSClient())
-             {
--                result = "\"" + result + "\"";
--            }
++            {
 +                if ((result.Length > 0) && (result[0] != '{') && (result[0] != '['))
 +                {
 +                    result = "\"" + result + "\"";
 +                }
- 
--            return result;
++
 +                return result;
 +            }
 +            
 +            // fat client
-+            if (result.EndsWith(":binary"))
+             if (result.EndsWith(":binary"))
+             {
+                 return result;
+@@ -156,6 +295,16 @@
+                 return null;
+             }
+ 
++            if (s == null)
 +            {
-+                return result;
++                return null;
 +            }
++
++            if ((type == "System.String") && s.EndsWith(":base64"))
++            {
++                return System.Text.UTF8Encoding.ASCII.GetString(Convert.FromBase64String(s.Substring(0, s.Length - ":base65".Length)));
++            }
++
+             if (s.EndsWith(":binary"))
+             {
+                 type = "binary";
+@@ -222,13 +371,17 @@
+ 
+                 throw new Exception("THttpBinarySerializer.DeserializeObject: unknown enum " + type);
+             }
+-            else // if (type == "binary" || true)
++            else if ((s != null) && (s.Length > 9)) // if (type == "binary" || true)
+             {
+                 MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(s));
+                 memoryStream.Seek(0, SeekOrigin.Begin);
+                 BinaryFormatter binaryFormatter = new BinaryFormatter();
+                 return binaryFormatter.Deserialize(memoryStream);
+             }
 +            else
 +            {
-+                return result + ":" + (binary ? "binary" : o.GetType().ToString());
++                return null;
 +            }
          }
- 
-         /// <summary>
+     }
+ }

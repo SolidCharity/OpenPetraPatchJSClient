@@ -1,5 +1,5 @@
---- openpetra.js.before/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs	2014-08-29 15:37:59.000000000 +0200
+--- openpetra.js.before/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs	2014-08-30 15:01:03.000000000 +0200
 @@ -5,6 +5,7 @@
  //       timop
  //
@@ -16,7 +16,7 @@
  using GNU.Gettext;
  using Ict.Common;
  using Ict.Common.IO;
-@@ -657,6 +659,94 @@
+@@ -697,6 +699,94 @@
              return MainDS;
          }
  
@@ -111,7 +111,7 @@
          /// <summary>
          /// returns cost centre hierarchy and cost centre details for this ledger
          /// </summary>
-@@ -1471,23 +1561,19 @@
+@@ -1588,23 +1678,19 @@
          {
              GLSetupTDS MainDS = new GLSetupTDS();
  
@@ -139,7 +139,7 @@
                  InsertNodeIntoXmlDocument(MainDS, doc, doc.DocumentElement,
                      (AAccountHierarchyDetailRow)MainDS.AAccountHierarchyDetail.DefaultView[0].Row);
              }
-@@ -1496,6 +1582,17 @@
+@@ -1613,6 +1699,17 @@
              return TXMLParser.XmlToString(doc);
          }
  
@@ -157,7 +157,7 @@
          /// <summary>
          /// helper function for ExportCostCentreHierarchy
          /// </summary>
-@@ -1661,16 +1758,17 @@
+@@ -1778,16 +1875,17 @@
          /// </summary>
          /// <param name="ALedgerNumber"></param>
          /// <param name="AHierarchyName"></param>
@@ -178,7 +178,7 @@
              }
              catch (XmlException exp)
              {
-@@ -1679,7 +1777,7 @@
+@@ -1796,7 +1894,7 @@
                      Environment.NewLine +
                      exp.Message +
                      Environment.NewLine +

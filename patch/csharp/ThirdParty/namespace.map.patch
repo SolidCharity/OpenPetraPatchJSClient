@@ -1,6 +1,6 @@
---- openpetra.js.before/csharp/ThirdParty/namespace.map	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ThirdParty/namespace.map	2014-08-29 15:37:59.000000000 +0200
-@@ -29,7 +29,7 @@
+--- openpetra.js.before/csharp/ThirdParty/namespace.map	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/csharp/ThirdParty/namespace.map	2014-08-30 15:01:03.000000000 +0200
+@@ -30,7 +30,7 @@
  System.Web.Services=${csharpStdLibs}/System.Web.Services.dll
  System.ServiceModel.Web=${csharpStdLibs}/System.ServiceModel.Web.dll
  System.ServiceModel=${csharpStdLibs}/System.ServiceModel.dll
@@ -9,7 +9,7 @@
  System.Web*=${csharpStdLibs}/System.Web.dll
  System.Windows.Forms=${csharpStdLibs}/System.Windows.Forms.dll
  System.Xml=${csharpStdLibs}/System.Xml.dll
-@@ -37,4 +37,4 @@
+@@ -38,4 +38,4 @@
  Microsoft.Win32=${csharpStdLibs}/System.dll
  Microsoft.CSharp=${csharpStdLibs}/Microsoft.CSharp.dll
  # System* must always be last

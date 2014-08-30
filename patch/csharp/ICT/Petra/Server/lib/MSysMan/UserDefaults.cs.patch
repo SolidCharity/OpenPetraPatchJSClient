@@ -1,6 +1,6 @@
---- openpetra.js.before/csharp/ICT/Petra/Server/lib/MSysMan/UserDefaults.cs	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/csharp/ICT/Petra/Server/lib/MSysMan/UserDefaults.cs	2014-08-29 15:37:59.000000000 +0200
-@@ -44,6 +44,13 @@
+--- openpetra.js.before/csharp/ICT/Petra/Server/lib/MSysMan/UserDefaults.cs	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/csharp/ICT/Petra/Server/lib/MSysMan/UserDefaults.cs	2014-08-30 15:01:03.000000000 +0200
+@@ -46,6 +46,13 @@
      /// </summary>
      public class TUserDefaults
      {

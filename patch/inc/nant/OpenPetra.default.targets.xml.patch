@@ -1,5 +1,5 @@
---- openpetra.js.before/inc/nant/OpenPetra.default.targets.xml	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/inc/nant/OpenPetra.default.targets.xml	2014-08-29 15:37:59.000000000 +0200
+--- openpetra.js.before/inc/nant/OpenPetra.default.targets.xml	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/inc/nant/OpenPetra.default.targets.xml	2014-08-30 15:01:03.000000000 +0200
 @@ -118,7 +118,7 @@
                spawn="true">
          <environment>
@@ -9,7 +9,7 @@
            <variable name="MONO_OPTIONS" value="--debug"/>
            <!-- see http://www.mono-project.com/IOMap -->
            <!-- <variable name="MONO_IOMAP" value="all"/> -->
-@@ -155,6 +155,19 @@
+@@ -175,6 +175,19 @@
      </if>
    </if>
    <if test="${'unix'==platform::get-name()}" >
@@ -29,7 +29,7 @@
        <echo message="in your browser, go to http://localhost:${Server.Port}/"/>
        <exec program="xsp4" 
                workingdir="${dir.delivery}"
-@@ -162,7 +175,7 @@
+@@ -182,7 +195,7 @@
                spawn="false">
          <environment>
            <variable name="PATH" path="${environment::get-variable('PATH')};${MonoBinPath}"/>

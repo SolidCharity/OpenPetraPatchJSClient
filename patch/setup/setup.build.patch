@@ -1,6 +1,6 @@
---- openpetra.js.before/setup/setup.build	2014-08-29 15:39:26.000000000 +0200
-+++ openpetra.js/setup/setup.build	2014-08-29 15:37:59.000000000 +0200
-@@ -304,6 +304,25 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
+--- openpetra.js.before/setup/setup.build	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/setup/setup.build	2014-08-30 15:01:03.000000000 +0200
+@@ -304,6 +304,25 @@
    <!-- result is in setupDir for building the rpm package -->
  </target>
  
@@ -26,7 +26,7 @@
  <target name="buildWindowsRemoteClient" help="build the windows remote client, and the patches">
    <property name="WithLinuxClient" value="false"/>
    <property name="WithWindowsClient" value="true"/>
-@@ -423,6 +442,7 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
+@@ -423,6 +442,7 @@
    <mkdir dir="${setupDir}/formletters30"/>
    <mkdir dir="${setupDir}/resources30"/>
    <mkdir dir="${setupDir}/bin30"/>
@@ -34,7 +34,7 @@
  
    <echo file="${setupDir}/bin30/version.txt">${ReleaseVersion}</echo>
    <copy todir="${setupDir}/bin30">
-@@ -442,13 +462,18 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
+@@ -442,13 +462,18 @@
    <copy file="${dir.bin}/Ict.Tools.PatchTool.exe" tofile="${setupDir}/bin30/Ict.Tools.PatchTool.exe" overwrite="true"/>
    <copy file="${dir.bin}/Ict.Tools.PatchTool.Library.dll" tofile="${setupDir}/bin30/Ict.Tools.PatchTool.Library.dll" overwrite="true"/>
  
@@ -54,7 +54,7 @@
          <include name="${setupDir}/bin30/sqlite3.dll" />
        </fileset>
      </delete>
-@@ -476,13 +501,23 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
+@@ -476,13 +501,23 @@
        <property name="UINavigation.file" value="${dir.root}/csharp/ICT/Petra/Definitions/UINavigation.yml"/>
        <copy file="${UINavigation.file}" tofile="${setupDir}/bin30/UINavigation.yml" overwrite="true"/>
      </if>

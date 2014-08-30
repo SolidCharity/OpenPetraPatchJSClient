@@ -1,8 +1,6 @@
-diff --git a/inc/template/src/ClientServerGlue/ServerGlue.cs b/inc/template/src/ClientServerGlue/ServerGlue.cs
-index 18c323e..3864cd3 100644
---- a/inc/template/src/ClientServerGlue/ServerGlue.cs
-+++ b/inc/template/src/ClientServerGlue/ServerGlue.cs
-@@ -38,6 +38,11 @@ public class TM{#TOPLEVELMODULE}WebService : System.Web.Services.WebService
+--- openpetra.js.before/inc/template/src/ClientServerGlue/ServerGlue.cs	2014-08-30 15:06:37.000000000 +0200
++++ openpetra.js/inc/template/src/ClientServerGlue/ServerGlue.cs	2014-08-30 15:01:03.000000000 +0200
+@@ -38,6 +38,11 @@
  {
      private static SortedList<string, object> FUIConnectors = new SortedList<string, object>();
  
