@@ -1,5 +1,168 @@
----- openpetra.js.before/csharp/ICT/Common/Remoting/Shared/Serialization.cs     2014-08-29 15:39:26.000000000 +0200
--+++ openpetra.js/csharp/ICT/Common/Remoting/Shared/Serialization.cs    2014-08-29 15:37:58.000000000 +0200
+--- openpetra.js.before/csharp/ICT/Common/Remoting/Shared/Serialization.cs	2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Common/Remoting/Shared/Serialization.cs	2014-08-29 15:37:58.000000000 +0200
+@@ -5,6 +5,7 @@
+ //       timop
+ //
+ // Copyright 2004-2014 by OM International
++// Copyright 2013-2014 by SolidCharity
+ //
+ // This file is part of OpenPetra.org.
+ //
+@@ -32,16 +33,73 @@ using System.Collections.Specialized;
+ using System.Runtime.Serialization;
+ using System.Runtime.Serialization.Formatters.Binary;
+ using System.Reflection;
++using System.Web.Script.Serialization;
+ using Ict.Common;
+ using Ict.Common.IO;
+ 
+ namespace Ict.Common.Remoting.Shared
+ {
+-    /// serialize and deserialize complex types in binary
++    /// serialize and deserialize complex types using JSON
++    /// TODO: rename the class
+     public class THttpBinarySerializer
+     {
++        static private string DataSetToJson(DataSet ADataset)
++        {
++            JavaScriptSerializer serializer = new JavaScriptSerializer();
++
++            Dictionary <string, List <Dictionary <string, object>>>dataset =
++                new Dictionary <string, List <Dictionary <string, object>>>();
++            List <Dictionary <string, object>>table = null;
++            Dictionary <string, object>row = null;
++
++            foreach (DataTable dt in ADataset.Tables)
++            {
++                table = new List <Dictionary <string, object>>();
++
++                foreach (DataRow dr in dt.Rows)
++                {
++                    row = new Dictionary <string, object>();
++
++                    foreach (DataColumn col in dt.Columns)
++                    {
++                        row.Add(col.ColumnName.Trim(), dr[col]);
++                    }
++
++                    table.Add(row);
++                }
++
++                dataset.Add(dt.TableName, table);
++            }
++
++            return serializer.Serialize(dataset);
++        }
++
++        static private string DataTableToJson(DataTable ATable)
++        {
++            JavaScriptSerializer serializer = new JavaScriptSerializer();
++
++            List <Dictionary <string, object>>table = null;
++            Dictionary <string, object>row = null;
++
++            table = new List <Dictionary <string, object>>();
++
++            foreach (DataRow dr in ATable.Rows)
++            {
++                row = new Dictionary <string, object>();
++
++                foreach (DataColumn col in ATable.Columns)
++                {
++                    row.Add(col.ColumnName.Trim(), dr[col]);
++                }
++
++                table.Add(row);
++            }
++
++            return serializer.Serialize(table);
++        }
++
+         /// <summary>
+-        /// serialize any object. if it is a complex type, use Base64
++        /// serialize any object. if it is a complex type, use JSON
+         /// </summary>
+         static public string SerializeObject(object o, bool binary)
+         {
+@@ -60,6 +118,21 @@ namespace Ict.Common.Remoting.Shared
+                 return "null";
+             }
+ 
++            if (o is Type)
++            {
++                return o.ToString();
++            }
++
++            if (o is DataSet)
++            {
++                return DataSetToJson((DataSet)o);
++            }
++
++            if (o is DataTable)
++            {
++                return DataTableToJson((DataTable)o);
++            }
++
+             MemoryStream memoryStream = new MemoryStream();
+             BinaryFormatter binaryFormatter = new BinaryFormatter();
+             try
+@@ -136,14 +209,12 @@ namespace Ict.Common.Remoting.Shared
+ 
+             string result = SerializeObject(o, binary);
+ 
+-            if (result.EndsWith(":binary"))
++            if ((result.Length > 0) && (result[0] != '{') && (result[0] != '['))
+             {
+-                return result;
+-            }
+-            else
+-            {
+-                return result + ":" + (binary ? "binary" : o.GetType().ToString());
++                result = "\"" + result + "\"";
+             }
++
++            return result;
+         }
+ 
+         /// <summary>
+@@ -156,6 +227,16 @@ namespace Ict.Common.Remoting.Shared
+                 return null;
+             }
+ 
++            if (s == null)
++            {
++                return null;
++            }
++
++            if ((type == "System.String") && s.EndsWith(":base64"))
++            {
++                return System.Text.UTF8Encoding.ASCII.GetString(Convert.FromBase64String(s.Substring(0, s.Length - ":base65".Length)));
++            }
++
+             if (s.EndsWith(":binary"))
+             {
+                 type = "binary";
+@@ -222,13 +303,17 @@ namespace Ict.Common.Remoting.Shared
+ 
+                 throw new Exception("THttpBinarySerializer.DeserializeObject: unknown enum " + type);
+             }
+-            else // if (type == "binary" || true)
++            else if ((s != null) && (s.Length > 9)) // if (type == "binary" || true)
+             {
+                 MemoryStream memoryStream = new MemoryStream(Convert.FromBase64String(s));
+                 memoryStream.Seek(0, SeekOrigin.Begin);
+                 BinaryFormatter binaryFormatter = new BinaryFormatter();
+                 return binaryFormatter.Deserialize(memoryStream);
+             }
++            else
++            {
++                return null;
++            }
+         }
+     }
+ }
+--- openpetra.js.before/csharp/ICT/Common/Remoting/Shared/Serialization.cs     2014-08-29 15:39:26.000000000 +0200
++++ openpetra.js/csharp/ICT/Common/Remoting/Shared/Serialization.cs    2014-08-29 15:37:58.000000000 +0200
 @@ -43,6 +43,11 @@
      /// TODO: rename the class
      public class THttpBinarySerializer
