@@ -1,0 +1,13 @@
+diff --git a/csharp/ICT/Common/IO/HTTPUtils.cs b/csharp/ICT/Common/IO/HTTPUtils.cs
+index 8fbaf76..98db7ad 100644
+--- a/csharp/ICT/Common/IO/HTTPUtils.cs
++++ b/csharp/ICT/Common/IO/HTTPUtils.cs
+@@ -97,6 +97,8 @@ namespace Ict.Common.IO
+                 TLogging.LogAtLevel(1, "GetWebRequest: got called for URI: " + address.ToString());
+                 WebRequest request = base.GetWebRequest(address);
+ 
++                request.UserAgent="Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/6.0; OpenPetraFatClient)";
++
+                 request.Timeout = Convert.ToInt32(
+                     TimeSpan.FromMinutes(TAppSettingsManager.GetInt32("WebRequestTimeOutInMinutes", 15)).
+                     TotalMilliseconds);

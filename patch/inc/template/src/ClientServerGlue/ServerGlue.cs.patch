@@ -1,0 +1,16 @@
+diff --git a/inc/template/src/ClientServerGlue/ServerGlue.cs b/inc/template/src/ClientServerGlue/ServerGlue.cs
+index 18c323e..3864cd3 100644
+--- a/inc/template/src/ClientServerGlue/ServerGlue.cs
++++ b/inc/template/src/ClientServerGlue/ServerGlue.cs
+@@ -38,6 +38,11 @@ public class TM{#TOPLEVELMODULE}WebService : System.Web.Services.WebService
+ {
+     private static SortedList<string, object> FUIConnectors = new SortedList<string, object>();
+ 
++    private bool isJSClient()
++    {
++       return HttpContext.Current!=null && !HttpContext.Current.Request.UserAgent.Contains("OpenPetra");
++    }
++
+     /// <summary>
+     /// constructor, which is called for each http request
+     /// </summary>
