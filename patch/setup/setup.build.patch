@@ -1,6 +1,6 @@
 --- openpetra.js.before/setup/setup.build	2014-08-29 15:39:26.000000000 +0200
 +++ openpetra.js/setup/setup.build	2014-08-29 15:37:59.000000000 +0200
-@@ -287,6 +287,25 @@
+@@ -304,6 +304,25 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
    <!-- result is in setupDir for building the rpm package -->
  </target>
  
@@ -26,7 +26,7 @@
  <target name="buildWindowsRemoteClient" help="build the windows remote client, and the patches">
    <property name="WithLinuxClient" value="false"/>
    <property name="WithWindowsClient" value="true"/>
-@@ -407,6 +426,7 @@
+@@ -423,6 +442,7 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
    <mkdir dir="${setupDir}/formletters30"/>
    <mkdir dir="${setupDir}/resources30"/>
    <mkdir dir="${setupDir}/bin30"/>
@@ -34,14 +34,7 @@
  
    <echo file="${setupDir}/bin30/version.txt">${ReleaseVersion}</echo>
    <copy todir="${setupDir}/bin30">
-@@ -420,18 +440,24 @@
-       <exclude name="WebDriver*" />
-       <exclude name="NUnitForms*" />
-       <exclude name="Mono.*" />
-+      <exclude name="sqlite3.dll"/>
-       <include name="*/*.dll" /> <!-- i18n DLLs-->
-     </fileset>
-   </copy>
+@@ -442,6 +462,12 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
    <copy file="${dir.bin}/Ict.Tools.PatchTool.exe" tofile="${setupDir}/bin30/Ict.Tools.PatchTool.exe" overwrite="true"/>
    <copy file="${dir.bin}/Ict.Tools.PatchTool.Library.dll" tofile="${setupDir}/bin30/Ict.Tools.PatchTool.Library.dll" overwrite="true"/>
  
@@ -54,13 +47,7 @@
    <if test="${BuildArchive == 'server'}">
      <delete>
        <fileset>
-         <include name="${setupDir}/bin30/Ict.Petra.Client*" />
-         <include name="${setupDir}/bin30/PetraClient*" />
--        <include name="${setupDir}/bin30/UINavigation.yml" />
-       </fileset>
-     </delete>
-   </if>
-@@ -448,22 +474,20 @@
+@@ -467,22 +493,20 @@ public static string InsertRecursiveAllFilesFromSubdirectoriesForDeletion(string
      </delete>
    </if>
  
@@ -82,11 +69,11 @@
 +  <property name="UINavigation.file" value="${dir.root}/csharp/ICT/Petra/Definitions/UINavigation.yml.my"/>
 +  <if test="${file::exists(UINavigation.file)}">
 +    <copy file="${UINavigation.file}" tofile="${setupDir}/bin30/UINavigation.yml" overwrite="true"/>
-   </if>
++  </if>
 +  <if test="${not file::exists(UINavigation.file)}">
 +    <property name="UINavigation.file" value="${dir.root}/csharp/ICT/Petra/Definitions/UINavigation.yml"/>
 +    <copy file="${UINavigation.file}" tofile="${setupDir}/bin30/UINavigation.yml" overwrite="true"/>
-+  </if>
+   </if>
 +  <copy todir="${setupDir}/resources30">
 +    <fileset basedir="${dir.root}/resources">
 +      <include name="*.ico" />
