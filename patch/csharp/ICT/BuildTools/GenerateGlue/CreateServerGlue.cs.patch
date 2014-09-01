@@ -47,13 +47,13 @@
                      Environment.NewLine);
              }
  
-+            // for string parameters, check if they have been encoded binary due to special characters in the string;
++            // EnumParameters are also binary encoded
 +            // this obviously does not apply to out parameters
-+            if ((parametertype == "System.String") && ((ParameterModifiers.Out & p.ParamModifier) == 0))
++            if (EnumParameter && ((ParameterModifiers.Out & p.ParamModifier) == 0))
 +            {
 +                snippet.AddToCodelet(
 +                    "LOCALVARIABLES",
-+                    p.ParameterName + " = (string) THttpBinarySerializer.DeserializeObject(" + p.ParameterName + ",\"System.String\");" +
++                    p.ParameterName + " = THttpBinarySerializer.DeserializeObject(" + p.ParameterName + ",\"System.String\").ToString();" +
 +                    Environment.NewLine);
 +            }
 +
