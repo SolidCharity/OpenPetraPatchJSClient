@@ -22,112 +22,85 @@
   </head>
 <body onload="Init()">
 <!-- ab hier kommt das Formular -->
-<form class="form-horizontal" id="formPartnerFind">
-<fieldset>
-<!-- Find by Partner Details -->
-<div class="form-group row">
-    <div class="col-md-11">
-        <div class="col-sx-5 col-sm-6">
-            <h2>Find by Partner Details</h2>
-        </div>
-    </div>
-</div>
-<div class="input-group-addon">
-    <div class="form-group row">    
-    <!-- Find Criteria-->
-    <div >
-        <label class="col-sm-1 control-label" for="findcriteria"><h3>Find Criteria</h3></label>
-    </div>
-    <!-- Partener Name -->
-    <div class="form-group row">        
-        <div class="col-md-11">        
-			 <label    class="col-sx-4 col-sm-2 control-label" for="partnername">Partner Name:</label>
-			<div class="col-sm-4">
-				<input id="partnername" name="partnername" type="text" placeholder="" class="form-control"/>
-			</div>	
-        </div>         
-    </div>       
+<div class="container">
+    <div class="row col-md-11">
+        <form class="form-horizontal" id="partnerfind_form">
+            <fieldset>
+                <!-- Form Name -->
+                <div class="collapseLegend"> <a data-toggle="collapse" data-target="#collapseFindCriteria" href="#collapseFindCriteria" class="collapsed">
+                    <legend> Find Criteria</legend>                  
+                </a>
+
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="partnername">Partner name</label>
+                    <div class="col-md-4">
+                        <input id="partnername" name="textinput" type="text" placeholder="" class="form-control input-md">
+                    </div>
+                </div>
+                <div id="collapseFindCriteria" class="panel-collapse collapse out">
     <!-- Firstname -->
-    <div class="form-group row">
-        <div class="col-md-11">
-		  <label class="col-sx-4 col-sm-2 control-label" for="Firstname">Firstname:</label>
-		      <div class="col-sm-4">
+    <div class="form-group">
+		  <label class="col-md-4 control-label" for="Firstname">Firstname:</label>
+		      <div class="col-md-4">
 			     <input id="Firstname" name="Firstname" type="text" placeholder="" class="form-control"/>
               </div>
-        </div>    
     </div>
     <!-- Address 1 -->
-    <div class="form-group row">
-        <div class="col-md-11">
-            <label class="col-sm-2 control-label" for="address1">Address 1:</label>
-                <div class="col-sm-4">
+    <div class="form-group">
+            <label class="col-md-4 control-label" for="address1">Address 1:</label>
+                <div class="col-md-4">
                     <input id="address1" name="address1" type="text" placeholder="" class="form-control">
                 </div>
-        </div>   
     </div>
     <!-- City/Town -->
-    <div class="form-group row">
-        <div class="col-md-11">
-        <label class="col-sm-2 control-label" for="city/town">City/Town:</label>
-            <div class="col-sm-4">
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="city/town">City/Town:</label>
+            <div class="col-md-4">
                 <input  id="city/town" name="city/town" type="text" placeholder="" class="form-control"/>
             </div>
-        </div>
     </div>
     <!-- Post Code -->
-    <div class="form-group row">
-        <div class="col-md-11">
-        <label class="col-sm-2 control-label" for="postcode">Post Code:</label>
-            <div class="col-sm-4">
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="postcode">Post Code:</label>
+            <div class="col-md-4">
                 <input  id="postcode" name="postcode" type="text" placeholder="" class="form-control"/>
             </div>
-        </div>
     </div>
     <!-- Country -->
-    <div class="form-group row">
-        <div class="col-md-11">
-            <label class="col-sm-2 control-label" for="country">Country:</label>        
-                <div class="col-sm-4">
+    <div class="form-group">
+            <label class="col-md-4 control-label" for="country">Country:</label>        
+                <div class="col-md-4">
                     <select id="country" name="country" class="form-control">
                     </select>
                 </div>
             </div> 
-        </div>         
-        <!-- Multiple Checkboxes (inline) -->
-        <div class="form-group row">
-          <div class="col-md-11">
-              <div class="col-sx-2 col-sm-1"> 
-                <label for="mailingaddressesonly">Mailing Addresses Only:</label>
-                <input   id="mailingaddressesonly" name="mailingaddressesonly" type="checkbox" class="">   
-              </div>
-          </div>
-        </div>
-    </div>    
-</div>
-<div><legend></legend></div>
-<div class="form-group row">
-    <!-- Button Search -->
-    <div class="col-xs-1">
-        <button class="btn btn-primary" id="btnSearch">Search</button>
-    </div>
-     <div class="col-xs-6"></div>
-     <!-- Button Clear -->
-    <div class="col-xs-1">
-        <button class="btn" id="btnClear">Clear</button>
-    </div>
-</div>
-</fieldset>
-</form>
+                        <!-- Prepended checkbox -->
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="chkMailingAddressesOnly">Mailing Address</label>
+                            <div class="col-md-4">
+                                <input type="checkbox" id="chkMailingAddressesOnly" name="chkMailingAddressesOnly">
+                                <label>only find mailing addresses</label>
+                            </div>
+                        </div>
+        
+                        <div class="form-group">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <button id="btnSearch" name="btnSearch" class="btn btn-primary">Search</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button id="btnClear" name="btnClear" class="btn btn-primary">Clear</button>
+                            </div>
+                        </div>
 
+            </fieldset>
+        </form>
+        <legend>Found Partners:</legend>
+
+ 
 <div class="input-group-addon">
-    <div class="row">
-    <div class="col-md-11">
-        <!-- Find Result -->    
-        <div>
-            <label class="col-sm-1 control-label"><h3>Find Result</h3></label>
-        </div>
-    </div>
-    </div>
     <div class="row">
     <div class="col-md-11">
         <!-- Table -->
@@ -154,5 +127,8 @@
     </div>
     </div>        
 </div>
+
+</div></div>
 </body>
 </html>
+
