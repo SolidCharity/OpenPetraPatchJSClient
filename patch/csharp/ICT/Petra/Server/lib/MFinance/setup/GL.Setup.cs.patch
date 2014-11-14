@@ -1,5 +1,7 @@
---- openpetra.js.before/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs	2014-08-30 15:06:37.000000000 +0200
-+++ openpetra.js/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs	2014-08-30 15:01:03.000000000 +0200
+diff --git a/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs b/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs
+index d34840a..5bf8453 100644
+--- a/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs
++++ b/csharp/ICT/Petra/Server/lib/MFinance/setup/GL.Setup.cs
 @@ -5,6 +5,7 @@
  //       timop
  //
@@ -8,7 +10,7 @@
  //
  // This file is part of OpenPetra.org.
  //
-@@ -28,6 +29,7 @@
+@@ -29,6 +30,7 @@ using System.Data.Odbc;
  using System.Globalization;
  using System.Xml;
  using System.IO;
@@ -16,7 +18,7 @@
  using GNU.Gettext;
  using Ict.Common;
  using Ict.Common.IO;
-@@ -697,6 +699,94 @@
+@@ -734,6 +736,94 @@ namespace Ict.Petra.Server.MFinance.Setup.WebConnectors
              return MainDS;
          }
  
@@ -111,16 +113,17 @@
          /// <summary>
          /// returns cost centre hierarchy and cost centre details for this ledger
          /// </summary>
-@@ -1588,23 +1678,19 @@
-         {
-             GLSetupTDS MainDS = new GLSetupTDS();
- 
--            AAccountHierarchyAccess.LoadViaALedger(MainDS, ALedgerNumber, null);
--            AAccountHierarchyDetailAccess.LoadViaALedger(MainDS, ALedgerNumber, null);
-+            AAccountHierarchyAccess.LoadByPrimaryKey(MainDS, ALedgerNumber, AAccountHierarchyName, null);
-+            AAccountHierarchyDetailAccess.LoadViaAAccountHierarchy(MainDS, ALedgerNumber, AAccountHierarchyName, null);
-             AAccountAccess.LoadViaALedger(MainDS, ALedgerNumber, null);
-             AAccountPropertyAccess.LoadViaALedger(MainDS, ALedgerNumber, null);
+@@ -1765,23 +1855,20 @@ namespace Ict.Petra.Server.MFinance.Setup.WebConnectors
+                 ref Transaction,
+                 delegate
+                 {
+-                    AAccountHierarchyAccess.LoadViaALedger(MainDS, ALedgerNumber, Transaction);
+-                    AAccountHierarchyDetailAccess.LoadViaALedger(MainDS, ALedgerNumber, Transaction);
++                    AAccountHierarchyAccess.LoadByPrimaryKey(MainDS, ALedgerNumber, AAccountHierarchyName, Transaction);
++                    AAccountHierarchyDetailAccess.LoadViaAAccountHierarchy(MainDS, ALedgerNumber, AAccountHierarchyName, Transaction);
+                     AAccountAccess.LoadViaALedger(MainDS, ALedgerNumber, Transaction);
+                     AAccountPropertyAccess.LoadViaALedger(MainDS, ALedgerNumber, Transaction);
+                 });
  
              XmlDocument doc = TYml2Xml.CreateXmlDocument();
  
@@ -134,12 +137,11 @@
                  MainDS.AAccountHierarchyDetail.DefaultView.RowFilter =
                      AAccountHierarchyDetailTable.GetAccountHierarchyCodeDBName() + " = '" + AAccountHierarchyName + "' AND " +
 -                    AAccountHierarchyDetailTable.GetAccountCodeToReportToDBName() + " = '" + accountHierarchy.RootAccountCode + "'";
--
 +                    AAccountHierarchyDetailTable.GetAccountCodeToReportToDBName() + " = '" + MainDS.AAccountHierarchy[0].RootAccountCode + "'";
+ 
                  InsertNodeIntoXmlDocument(MainDS, doc, doc.DocumentElement,
                      (AAccountHierarchyDetailRow)MainDS.AAccountHierarchyDetail.DefaultView[0].Row);
-             }
-@@ -1613,6 +1699,17 @@
+@@ -1791,6 +1878,17 @@ namespace Ict.Petra.Server.MFinance.Setup.WebConnectors
              return TXMLParser.XmlToString(doc);
          }
  
@@ -157,7 +159,7 @@
          /// <summary>
          /// helper function for ExportCostCentreHierarchy
          /// </summary>
-@@ -1778,16 +1875,17 @@
+@@ -1964,16 +2062,17 @@ namespace Ict.Petra.Server.MFinance.Setup.WebConnectors
          /// </summary>
          /// <param name="ALedgerNumber"></param>
          /// <param name="AHierarchyName"></param>
@@ -178,7 +180,7 @@
              }
              catch (XmlException exp)
              {
-@@ -1796,7 +1894,7 @@
+@@ -1982,7 +2081,7 @@ namespace Ict.Petra.Server.MFinance.Setup.WebConnectors
                      Environment.NewLine +
                      exp.Message +
                      Environment.NewLine +
@@ -187,3 +189,10 @@
              }
  
              GLSetupTDS MainDS = LoadAccountHierarchies(ALedgerNumber);
+@@ -4006,4 +4105,4 @@ namespace Ict.Petra.Server.MFinance.Setup.WebConnectors
+             return RenameComplete;
+         } // RenameCostCentreCode
+     } // TGLSetupWebConnector
+-} // namespace
+\ No newline at end of file
++} // namespace
